@@ -193,16 +193,20 @@ class NotebookTools(object):
         backend must be changed to one that doesn't need a display.
         """
 
-        try:
-            tkinter.Tk()
-        except (tkinter.TclError, NameError):  # If there is no display.
+        if tkinter is not None:  # tkinter is at least installed
             try:
-                import matplotlib as mpl
-            except ImportError:
-                pass
+                tkinter.Tk()
+            except (tkinter.TclError, NameError):
+                pass  # It appears that there there is no display.
             else:
-                sciunit.logger.info("Setting matplotlib backend to Agg")
-                mpl.use("Agg")
+                return  # We can use the tkinter backend.
+        try:
+            import matplotlib as mpl
+        except ImportError:
+            pass
+        else:
+            sciunit.logger.info("Setting matplotlib backend to Agg")
+            mpl.use("Agg")
 
     def load_notebook(
         self, name: str
